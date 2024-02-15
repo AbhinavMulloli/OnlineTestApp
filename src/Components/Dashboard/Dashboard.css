@@ -1,0 +1,45 @@
+#im {
+  height: 67px;
+}
+
+.first {
+  background-color: white;
+  height: 22%;
+  width: 45%;
+  float: left;
+  margin-left: 4%;
+  text-align: center;
+  margin-bottom: 10%;
+
+}
+
+.g{
+  margin-top: 3%;
+  text-decoration: none;
+  color: darkgreen;
+
+}
+
+.li {
+  color: darkgreen;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+
+
+.gr {
+  color: darkgreen;
+}
+
+.im {
+  height: 60%;
+  width: 100%;
+  margin-top: 12px;
+}
+span{
+  color:"green";
+  background-color:green;
+}
+
+

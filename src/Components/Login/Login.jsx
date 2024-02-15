@@ -2,6 +2,7 @@ import React, { useState ,useEffect} from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom';
+import "./Login.css"
 import {
   MDBBtn,
   MDBContainer,
@@ -67,9 +68,11 @@ function Login() {
 
 
       if(response.status==200){
+        console.log(response.data)
         if(response.data.message === "login Successfull"){
           localStorage.setItem("email",email)
           localStorage.setItem('token', response.data.token);
+          localStorage.setItem('id', response.data.id);
           toast.success(response.data.message);
         setTimeout(()=> {
           navigate('dashboard')
@@ -101,7 +104,7 @@ function Login() {
 
 
   return (
-    <div className='gradient'>
+    <div className='gradient' >
     <MDBContainer fluid >
 
     <MDBRow className='d-flex justify-content-center align-items-center h-100'>
@@ -109,8 +112,8 @@ function Login() {
 
     <div className='header-right ' style={{marginLeft:"91%",marginTop:"2px"}}>
 
-          <Link onClick={() => setSmShow(true)}><BsPersonCircle  className='icon'/>
-          </Link> 
+          <Link ><BsPersonCircle  className='icon'/></Link>
+         
        </div>
 
 
@@ -122,7 +125,7 @@ function Login() {
 
     <MDBCardBody className='p-5 w-100 d-flex flex-column mt-1'>
 
-        <h2 className="fw-bold mb-5 text-center" style={{color:'black',marginTop:"-5%"}}>Sign in</h2>
+        <h2 className=" mb-5 text-center" style={{color:'black',marginTop:"-5%"}}>Sign in</h2>
          <div>
         <input required onBlur={()=>setFocus({...focus,errEmail : true})} focus ={focus.errEmail.toString()} 
          className='form-control mb-3  w-100' onChange={userDetails} name='email'  placeholder='Email address' id='formControlLg' type='email' size="lg"/>
@@ -152,7 +155,7 @@ function Login() {
     </MDBCard>
   
 
-    <ToastContainer position="top-center" />
+        <ToastContainer autoClose={1400} position="top-center" />
 
     </MDBCol>
     </MDBRow>
