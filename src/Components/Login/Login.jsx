@@ -135,7 +135,7 @@ function Login() {
          <input required  pattern='^(?=.*\d).{8,}$' onBlur={()=>setFocus({...focus,errPass : true})} focus ={focus.errPass.toString()} 
          className='form-control mb-3 w-100' onChange={userDetails} name='psw' placeholder='Password' id='formControl' type='password' size="lg"/>
          <span className='ms-2 spa'>Password must have minimum 8 characters</span>
-        <p className="medium mb-2  pb-lg-3 text-center"><a style={{textDecoration:'none',color:'orange'}}  href="/reset">Forgot password?</a></p>
+        <p className="medium mb-2  pb-lg-3 text-center"><a style={{textDecoration:'none',color:'orange'}}  href="/forgetpass">Forgot password?</a></p>
         </div>
 
         <button size='lg' className='btn btn-primary  p-2 text-center  ' style={{ borderRadius: '5px',backgroundColor:"green",color:"white"}}  onClick={handleSubmit}>
