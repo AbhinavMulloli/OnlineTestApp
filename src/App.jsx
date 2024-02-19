@@ -4,6 +4,8 @@ import Login from './Components/Login/Login';
 import Register from './Components/Register/Register';
 import Dashboard from './Components/Dashboard/Dashboard';
 import Question from './Components/Questions/Question';
+import ForgetPass from './Components/Forgetpassword/ForgetPass';
+import UpdatePass from './Components/Forgetpassword/UpdatePass'
 
 export default function App() {
   return (
@@ -12,6 +14,8 @@ export default function App() {
      <Route path="/register" element={ <Register />}></Route>
     <Route path="/dashboard" element={ <Dashboard />}></Route>
     <Route path="/questions/:id" element={ <Question />}></Route>
+    <Route path="/forgetpass" element={ <ForgetPass />}></Route>
+    <Route path="/updatepass/:id" element={ <UpdatePass />}></Route>
   </Routes>
   )
 }

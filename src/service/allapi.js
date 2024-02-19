@@ -11,6 +11,16 @@ export const loginUser=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/login`,body)
 }
 
+//Verify email
+export const Verifyemail=async(body)=>{
+    return await commonRequest("POST",`${BASE_URL}/api/v1/verifymail`,body)
+}
+
+//Update password
+export const Updatepassword=async(body)=>{
+    return await commonRequest("POST",`${BASE_URL}/api/v1/updatepass`,body)
+}
+
 //Add marks
 export const addMarks=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/add-marks`,body)

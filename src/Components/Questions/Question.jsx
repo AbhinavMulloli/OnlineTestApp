@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import "./Question.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate,useParams } from 'react-router-dom';
+import { useNavigate,useParams,Link } from 'react-router-dom';
 import { Modal, Button, ListGroup } from 'react-bootstrap';
+import {BsArrowRightShort,BsArrowLeftShort,BsPersonCircle} from 'react-icons/bs'
+import { LuClipboardSignature } from "react-icons/lu";
 import {
   MDBBtn,
   MDBContainer,
@@ -18,6 +20,7 @@ import {
 from 'mdb-react-ui-kit';
 import { addMarks } from '../../service/allapi';
 
+
 function Question() {
   const [triviaData, setTriviaData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -25,7 +28,8 @@ function Question() {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
-  
+  const [showUnansweredModal, setShowUnansweredModal] = useState(false);
+
   //for quit modal
   const [isShow, setInvokeModal] = useState(false);
 
@@ -46,12 +50,12 @@ function Question() {
     navigate('/dashboard')
   };
 
-  
+
   useEffect(() => {
 
     // param id 
     console.log(id)
-  
+
     if(id == "maths123") {
 
       fetch('https://opentdb.com/api.php?amount=10&category=18&type=multiple')
@@ -103,10 +107,10 @@ function Question() {
         setTriviaData(formattedData);
       })
       .catch(error => console.error('Error fetching trivia data:', error));
-      
+
     }
-    
-      
+
+
   }, []);
 
   useEffect(() => {
@@ -124,7 +128,7 @@ function Question() {
       //object for useNavigate
   const navigate=useNavigate()
 
-  const indexOfLastQuestion = currentPage * questionsPerPage;
+  const indexOfLastQuestion = (currentPage + 1) * questionsPerPage; // Fix: Adding 1 to currentPage
   const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
   const currentQuestion = triviaData.slice(indexOfFirstQuestion, indexOfLastQuestion)[0];
 
@@ -149,7 +153,6 @@ function Question() {
   // mark sheet
 
   const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString();
   //create an object to store datas from input
   const [userData, setUser] = useState({
     subject: id,
@@ -165,6 +168,10 @@ function Question() {
       correctAnswersCount: correctAnswersCount
     }));
   }, [correctAnswersCount]);
+
+  const handlecheck = () => {
+    setShowUnansweredModal(true);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -186,6 +193,45 @@ function Question() {
     navigate('/dashboard')
 
   };
+  const handleShowUnansweredModal = () => {
+    setShowUnansweredModal(true);
+  };
+
+  const handleCloseUnansweredModal = () => {
+    setShowUnansweredModal(false);
+  };
+
+  const handleUnansweredQuestions = () => {
+    const unansweredQuestions = triviaData.filter(question => !selectedAnswers[question.question]);
+    return unansweredQuestions.map(question => question.number);
+  };
+
+  const renderPaginationNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 0; i < Math.ceil(triviaData.length / questionsPerPage); i++) {
+      pageNumbers.push(
+        <button 
+          key={i}
+          className={`pagination-btn page ${i === currentPage ? 'active' : ''}`}
+          onClick={() => setCurrentPage(i)}
+          style={{
+            padding: '8px 12px',
+            margin: '0 5px',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            backgroundColor: i === currentPage ? 'green' : '#fff',
+            color: i === currentPage ? '#fff' : '#333',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s, color 0.3s, border-color 0.3s',
+          }}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+    return pageNumbers;
+  };
+
   return (
     <>
       <div className='gradient' >
@@ -201,7 +247,24 @@ function Question() {
 
       <MDBCardBody className='p-5 w-100 d-flex flex-column mt-1' style={{boxShadow:'0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)'}}>
         <div>
-          <h2>NEET Questions</h2>
+        <div className="d-flex justify-content-center">
+          <h2>Answer The Questions</h2>{" "}
+          <Link
+            className="float-right mt-1"
+            style={{ paddingLeft: "100px" }}
+            onClick={handleShowUnansweredModal}
+          >
+            <LuClipboardSignature
+              style={{
+
+                height: "24px",
+                width: "24px",
+                cursor: "pointer",
+              }}
+              className="icon"
+            />
+          </Link>
+        </div>
           <h4 className="text-danger mb-3">Time left: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</h4>
           {currentQuestion && (
             <div>
@@ -225,16 +288,43 @@ function Question() {
               </form>
             </div>
           )}
-          <div style={{ marginTop: '10px' }} className="d-flex justify-content-center space-evenly">
+          <div
+            style={{ marginTop: "10px" }}
+            className="d-flex justify-content-center space-evenly"
+          >
             {currentPage > 0 && (
-              <button className="bg-info btn text-white" onClick={paginatePrev}>Previous</button>
+              <button
+                className="btn-outline-success btn me-3"
+                onClick={paginatePrev}
+              >
+                <BsArrowLeftShort className="iconss" />
+                Previous
+              </button>
             )}
-            {currentPage < Math.ceil(triviaData.length / questionsPerPage) - 1 && (
-              <button className="bg-success btn text-white ms-4" onClick={paginateNext}>Next</button>
+            {renderPaginationNumbers()}
+            {currentPage <
+              Math.ceil(triviaData.length / questionsPerPage) - 1 && (
+              <button
+                className="btn-outline-success btn  ms-3"
+                onClick={paginateNext}
+              >
+                Next <BsArrowRightShort className="iconss" />
+              </button>
             )}
-            <button className="bg-danger btn text-white ms-4" onClick={handleback} >Quit</button>
-            {currentPage === Math.ceil(triviaData.length / questionsPerPage) - 1 && (
-              <button className="bg-primary btn text-white ms-4" onClick={handleSubmit}>Submit</button>
+            <button
+              className="bg-danger btn text-white ms-3"
+              onClick={handleback}
+            >
+              Quit
+            </button>
+            {currentPage ===
+              Math.ceil(triviaData.length / questionsPerPage) - 1 && (
+              <button
+                className="bg-primary btn text-white ms-3"
+                onClick={handlecheck}
+              >
+                Submit
+              </button>
             )}
           </div>
           <Modal show={showResults} onHide={handleClose} centered>
@@ -259,7 +349,7 @@ function Question() {
               </ListGroup>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
+              <Button className='bg-white text-success ' style={{borderColor:"green"}} onClick={handleClose}>
                 Close
               </Button>
             </Modal.Footer>
@@ -274,13 +364,32 @@ function Question() {
             </Modal.Header>
             <Modal.Body><h5 className='text-center text-dark b'>Are you sure to quit the test ?</h5></Modal.Body>
             <Modal.Footer >
-              <Button variant="secondary" style={{ borderRadius: '10px',
-              backgroundColor:"red",color:"white",marginLeft:"-50px"}} onClick={() =>  setInvokeModal(false)}>Close</Button>
-              <Button variant="primary" style={{ borderRadius: '10px',
-              backgroundColor:"green",color:"white"}} onClick={confirmQuit}>Confirm</Button>
+              <Button className='bg-white text-success '  style={{
+              color:"white",marginLeft:"-50px",borderColor:"green"}} onClick={() =>  setInvokeModal(false)}>Close</Button>
+              <Button variant="success" style={{color:"white",borderColo:"green"}} onClick={confirmQuit}>Confirm</Button>
             </Modal.Footer>
 
 
+          </Modal>
+          {/* Modal for displaying unanswered questions */}
+          <Modal style={{color:"green"}}  show={showUnansweredModal} onHide={handleCloseUnansweredModal} centered >
+            <Modal.Header  closeButton>
+              <Modal.Title>Unanswered Questions</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="unanswered-questions">
+                <p className="unanswered-header">Unanswered question numbers:</p>
+                <div className="number-boxes">
+                  {handleUnansweredQuestions().map(number => (
+                    <div key={number} className="number-box">{number}</div>
+                  ))}
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button className='bg-white text-success ' style={{borderColor:"green"}} onClick={handleCloseUnansweredModal}>Close</Button>
+              <Button variant="success" onClick={handleSubmit}>Submit</Button>
+            </Modal.Footer>
           </Modal>
 
 
@@ -291,10 +400,10 @@ function Question() {
 
       </MDBContainer>
       </div>
-    
+
     </>
 
     );
 }
-    
+
 export default Question;
