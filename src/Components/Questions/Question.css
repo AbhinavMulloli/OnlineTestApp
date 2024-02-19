@@ -1,0 +1,39 @@
+.main{
+  background-color:whitesmoke;
+  width:100%;
+  height:70px;
+  
+}
+.deleteModal>.modal-dialog {
+  max-width: none;
+  width: 22%;
+}
+.cardss{
+  height:518px
+}
+
+@media(max-width: 700px) {
+
+  .deleteModal>.modal-dialog {
+    max-width: none;
+    width: 96%;
+  }
+
+  .cardss{
+    height:fit-content;
+  }
+
+
+}
+
+@media(max-width: 300px) {
+  .deleteModal>.modal-dialog {
+    max-width: none;
+    width: 86%;
+  }
+  .cardss{
+    height:fit-content;
+  }
+}
+
+

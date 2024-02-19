@@ -124,7 +124,7 @@ function Register() {
      }}>
      <MDBCardBody className='p-5 w-100 d-flex flex-column mt-1'>
 
-          <h2 className="fw-bold mb-3 text-center " style={{color:'black',marginTop:"-5%"}}>Register</h2>
+          <h2 className=" mb-4 text-center " style={{color:'black',marginTop:"-5%"}}>Register</h2>
          <div>
           <input required onBlur={()=>setFocus({...focus ,errName : true})} focus ={focus.errName.toString()}
           pattern='^[A-Za-z0-9].{2,16}' className='form-control mb-3  w-100' onChange={userDetails}
@@ -161,7 +161,7 @@ function Register() {
     </MDBContainer>
 
       </div>
-      <ToastContainer position="top-center" />
+      <ToastContainer autoClose={1400} position="top-center" />
       </div>
   );
 }
