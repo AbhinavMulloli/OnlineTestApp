@@ -1,33 +1,40 @@
-.main{
-  background-color:whitesmoke;
-  width:100%;
-  height:70px;
-  
+/* Styles for .main */
+.main {
+  background-color: whitesmoke;
+  width: 100%;
+  height: 70px;
 }
-.deleteModal>.modal-dialog {
+
+/* Styles for modal dialog inside .deleteModal */
+.deleteModal > .modal-dialog {
   max-width: none;
   width: 22%;
 }
-.cardss{
-  height:518px
+
+/* Styles for .cardss class */
+.cardss {
+  height: 518px;
 }
 
-
+/* Styles for .unanswered-questions */
 .unanswered-questions {
   padding: 20px;
 }
 
+/* Styles for .unanswered-header */
 .unanswered-header {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
+/* Styles for .number-boxes */
 .number-boxes {
   display: flex;
   flex-wrap: wrap;
 }
 
+/* Styles for .number-box */
 .number-box {
   width: 40px;
   height: 40px;
@@ -40,36 +47,35 @@
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color: red; 
+  background-color: red;
 }
 
-@media(max-width: 700px) {
-
-  .deleteModal>.modal-dialog {
+/* Media query for screen widths up to 700px */
+@media (max-width: 700px) {
+  .deleteModal > .modal-dialog {
     max-width: none;
     width: 96%;
   }
 
-  .cardss{
-    height:fit-content;
-  }
-  .page{
-    display:none;
-  }
-  .iconss{
-    display:none;
+  .cardss {
+    height: fit-content;
   }
 
-
+  .page,
+  .iconss {
+    display: none;
+  }
 }
 
-@media(max-width: 300px) {
-  .deleteModal>.modal-dialog {
+/* Media query for screen widths up to 300px */
+@media (max-width: 300px) {
+  .deleteModal > .modal-dialog {
     max-width: none;
     width: 86%;
   }
-  .cardss{
-    height:fit-content;
+
+  .cardss {
+    height: fit-content;
   }
 }
 

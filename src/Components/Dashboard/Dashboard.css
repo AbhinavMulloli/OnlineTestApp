@@ -1,7 +1,9 @@
+/* Adjust height for #im */
 #im {
   height: 67px;
 }
 
+/* Styles for .first class */
 .first {
   background-color: white;
   height: 22%;
@@ -10,33 +12,35 @@
   margin-left: 4%;
   text-align: center;
   margin-bottom: 10%;
-
 }
 
-.g{
+/* Styles for anchor tags with class .g */
+.g {
   margin-top: 3%;
   text-decoration: none;
   color: darkgreen;
-
 }
 
+/* Styles for anchor tags with class .li */
 .li {
   color: darkgreen;
   text-decoration: none;
   font-weight: bold;
 }
 
-
-
+/* Styles for elements with class .gr */
 .gr {
-  color: darkgreen;
+  color: #eaea34;
 }
 
+/* Styles for elements with class .im */
 .im {
   height: 60%;
   width: 100%;
   margin-top: 12px;
 }
+
+
 
 
 

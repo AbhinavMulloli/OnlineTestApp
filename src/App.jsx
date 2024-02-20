@@ -5,7 +5,9 @@ import Register from './Components/Register/Register';
 import Dashboard from './Components/Dashboard/Dashboard';
 import Question from './Components/Questions/Question';
 import ForgetPass from './Components/Forgetpassword/ForgetPass';
-import UpdatePass from './Components/Forgetpassword/UpdatePass'
+import UpdatePass from './Components/Forgetpassword/UpdatePass';
+import BarChart from './Components/Dashboard/Barchart';
+import PieChart from './Components/Dashboard/Piechart';
 
 export default function App() {
   return (

@@ -3,6 +3,6 @@
   font-size: 13px;
   display: none;
 }
-input:invalid[focus = 'true'] ~ span{
+input:invalid[focus = 'true'] ~ p{
   display: block;
 }
