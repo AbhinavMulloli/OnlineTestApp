@@ -22,7 +22,7 @@ import { addMarks } from '../../service/allapi';
 function Question() {
   const [triviaData, setTriviaData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [questionsPerPage] = useState(1); 
+  const [questionsPerPage] = useState(1);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
@@ -66,7 +66,7 @@ function Question() {
           return {
             ...question,
             options: options,
-            number: index + 1 
+            number: index + 1
           };
         });
         setTriviaData(formattedData);
@@ -82,6 +82,18 @@ function Question() {
     const timer = setTimeout(() => {
       if (timeLeft > 0) {
         setTimeLeft(prevTime => prevTime - 1);
+        if (timeLeft === 60) {
+          // Display an alert when 1 minute is left
+          toast.warn('Only 1 minute left!', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
       } else {
         handleSubmit();
       }
@@ -119,7 +131,7 @@ function Question() {
     questions: 10,
     date: new Date(),
     uid: userid,
-    correctAnswersCount: 0 
+    correctAnswersCount: 0
   });
 
   useEffect(() => {
@@ -166,7 +178,7 @@ function Question() {
     const pageNumbers = [];
     for (let i = 0; i < Math.ceil(triviaData.length / questionsPerPage); i++) {
       pageNumbers.push(
-        <button 
+        <button
           key={i}
           className={`pagination-btn page ${i === currentPage ? 'active' : ''}`}
           onClick={() => setCurrentPage(i)}
@@ -187,6 +199,21 @@ function Question() {
     }
     return pageNumbers;
   };
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Submit the quiz when tab is switched
+        handleSubmit();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   return (
     <>
@@ -271,6 +298,12 @@ function Question() {
                           Submit
                         </button>
                       )}
+                   
+                    </div>
+                    <div
+                      style={{ marginTop: "10px" }}
+                      className="d-flex justify-content-center space-evenly mt-5"
+                    >    <p className="text-danger"> <strong>Important Note:</strong> If you switch or minimize tabs during the exam, the exam will be considered over.</p>
                     </div>
                     <Modal show={showResults} onHide={handleClose} centered>
                       <Modal.Header closeButton>
