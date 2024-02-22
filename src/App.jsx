@@ -6,8 +6,7 @@ import Dashboard from './Components/Dashboard/Dashboard';
 import Question from './Components/Questions/Question';
 import ForgetPass from './Components/Forgetpassword/ForgetPass';
 import UpdatePass from './Components/Forgetpassword/UpdatePass';
-import BarChart from './Components/Dashboard/Barchart';
-import PieChart from './Components/Dashboard/Piechart';
+import Report from './Components/Reports/Report';
 
 export default function App() {
   return (
@@ -18,6 +17,7 @@ export default function App() {
     <Route path="/questions/:id" element={ <Question />}></Route>
     <Route path="/forgetpass" element={ <ForgetPass />}></Route>
     <Route path="/updatepass/:id" element={ <UpdatePass />}></Route>
+    <Route path="/report" element={ <Report />}></Route>
   </Routes>
   )
 }

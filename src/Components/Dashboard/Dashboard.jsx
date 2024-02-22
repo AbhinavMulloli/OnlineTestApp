@@ -4,10 +4,12 @@ import { Navbar, Nav, Form, FormControl, Button, Modal } from 'react-bootstrap';
 import { FiUser } from "react-icons/fi";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import Barchart from './Barchart';
 import Piechart from './Piechart';
-import { getallMarks } from '../../service/allapi';
+import { deleteAccount, getallMarks } from '../../service/allapi';
 
 function Dashboard() {
   const uid = localStorage.getItem("id");
@@ -15,27 +17,45 @@ function Dashboard() {
   const idb = "computer science";
   const idbc = "history";
 
-  const [show, setShow] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(false);
-  const [allmarks, SetAllMarks] = useState([]);
-  const navigate = useNavigate();
-
+  const [show, setShow] = useState(false);//for offcanvas
+  const [showInstructions, setShowInstructions] = useState(false);//for the instructions modal
+  const [allmarks, SetAllMarks] = useState([]);//for storing allmarks datas
+  const [isShow, setInvokeModal] = useState(false);//for delete account modal
+  const navigate = useNavigate();//object for useNavigate
+  //for offcanvas
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  //logout
   const handlelogout = () => {
     localStorage.removeItem("id");
     localStorage.removeItem("token");
     localStorage.removeItem("email")
+    localStorage.removeItem("user")
     navigate('/')
 
   }
-
+  //for instructions modal
   const handleInstructionsClose = () => setShowInstructions(false);
   const handleInstructionsShow = () => setShowInstructions(true);
+  //for delete account modal
+  const initModal = () => {
+    setInvokeModal(!isShow);
+  };
+  //funtion for delete Account
+  const confimrDelete = async () => {
+
+      const response = await deleteAccount(uid)
+      if (response.status == 200) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message)
+      }
+
+    }
 
   const userEmail = localStorage.getItem("email");
   const profilePicUrl = 'https://i.postimg.cc/mZN0z8kf/profile.png';
-
+  //funtion for get all marks data from backend
   const getAllMarks = async () => {
     const response = await getallMarks(uid);
     SetAllMarks(response.data);
@@ -75,18 +95,26 @@ function Dashboard() {
         <Navbar.Toggle aria-controls="navbarSupportedContent" className="text-dark" />
         <Navbar.Collapse id="navbarSupportedContent" className="text-dark">
           <Nav className="me-auto mb-2 mb-lg-0">
-            <Nav.Link href="#" className="text-dark" active>Maths</Nav.Link>
-            <Nav.Link href="#" className="text-dark">Computer Science</Nav.Link>
-            <Nav.Link href="#" className="text-dark">History</Nav.Link>
+            <Nav.Link onClick={initModal} className="text-success">Delete Account</Nav.Link>
             <Nav.Link onClick={handlelogout} className="text-success">Log out</Nav.Link>
           </Nav>
+          {/* modal for delete account confirmation */}
+          <Modal className='deleteModal' show={isShow} onHide={initModal}>
+            <Modal.Header closeButton>
+            </Modal.Header>
+            <Modal.Body><h5 className='text-center text-dark b'>Are you sure to delete this account ?</h5></Modal.Body>
+            <Modal.Footer>
+              <Button className='bg-white text-success '  style={{color:"white",marginLeft:"-50px",borderColor:"green"}} onClick={() =>  setInvokeModal(false)}>Close</Button>
+              <Button variant="success" style={{color:"white",borderColo:"green"}} onClick={confimrDelete}>Confirm</Button>
+            </Modal.Footer>
+          </Modal>
           <Form className="d-flex">
             <FormControl type="search" placeholder="Maths,Cs etc" className="me-2" aria-label="Search" />
             <Button variant="outline-success" type="submit">Search</Button>
           </Form>
         </Navbar.Collapse>
       </Navbar>
-
+       {/* offcanvas for showing profile and previous marks */}
       <Offcanvas show={show} onHide={handleClose} placement='end' style={{ color: 'darkgreen' }}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Profile</Offcanvas.Title>
@@ -196,6 +224,9 @@ function Dashboard() {
 
       <div className='row'>
         <h3 className='mx-auto text-white text-center'>Result Analysis</h3>
+        <div className='d-flex justify-content-center'>
+          <a href='/report' > <button  className=' mt-3 btn btn-light ' >View Score Summary</button></a> 
+            </div>
         <div className='col-lg-6 p-5'>
           <Barchart allmarks={allmarks}/>
         </div>
@@ -211,6 +242,7 @@ function Dashboard() {
           <p className="footer-alt mb-0 f-14">Indonesia-Pakistan-Russia</p>
         </div>
       </footer>
+      <ToastContainer autoClose={1400} position="top-center" />
     </>
   );
 }
