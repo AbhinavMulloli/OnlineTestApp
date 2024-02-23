@@ -4,21 +4,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BsPersonCircle } from 'react-icons/bs';
 import {
-  MDBBtn,
   MDBContainer,
   MDBRow,
   MDBCol,
   MDBCard,
   MDBCardBody,
-  MDBInput,
-  MDBIcon,
-  MDBCheckbox
 } from 'mdb-react-ui-kit';
-import { Updatepassword } from '../../service/allapi';
+import { UpdatePassword } from '../../service/allapi';
 
 function UpdatePass() {
   const { id } = useParams();
-
+  //for validation
   const [focus, setFocus] = useState({
     errName: false,
     errEmail: false,
@@ -30,7 +26,7 @@ function UpdatePass() {
     cpsw: "",
     id: id
   });
-
+  //object for useNavigate
   const navigate = useNavigate();
 
   const userDetails = (e) => {
@@ -39,7 +35,7 @@ function UpdatePass() {
     const key = e.target.name;
     setUser({ ...userData, [key]: value });
   };
-
+  //funtion for submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { psw, id, cpsw } = userData;
@@ -51,7 +47,7 @@ function UpdatePass() {
     } else if (psw !== cpsw) {
       toast.error('Password does not match');
     } else {
-      const response = await Updatepassword(userData);
+      const response = await UpdatePassword(userData);
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {

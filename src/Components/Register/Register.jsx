@@ -18,6 +18,7 @@ import "./Register.css";
 import { registerUser } from '../../service/allapi';
 
 function Register() {
+  //for validation
   const [focus, setFocus] = useState({
     errName: false,
     errEmail: false,
@@ -29,7 +30,7 @@ function Register() {
     email: "",
     psw: ""
   });
-
+  //object for useNavigate
   const navigate = useNavigate();
 
   const userDetails = (e) => {
@@ -38,7 +39,7 @@ function Register() {
     const key = e.target.name;
     setUser({ ...userData, [key]: value });
   };
-
+  //funtion for submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { uname, email, psw } = userData;

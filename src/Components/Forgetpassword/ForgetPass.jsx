@@ -4,19 +4,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { BsPersonCircle } from 'react-icons/bs';
 import {
-  MDBBtn,
   MDBContainer,
   MDBRow,
   MDBCol,
   MDBCard,
   MDBCardBody,
-  MDBInput,
-  MDBIcon,
-  MDBCheckbox
+
 } from 'mdb-react-ui-kit';
-import { Verifyemail } from '../../service/allapi';
+import { VerifyEmail } from '../../service/allapi';
 
 function ForgetPass() {
+  //for validation purpose
   const [focus, setFocus] = useState({
     errName: false,
     errEmail: false
@@ -34,7 +32,7 @@ function ForgetPass() {
     const key = e.target.name;
     setUser({ ...userData, [key]: value });
   };
-
+  //funtion for submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email } = userData;
@@ -42,7 +40,7 @@ function ForgetPass() {
     if (email === "") {
       toast.error('email required');
     } else {
-      const response = await Verifyemail(userData);
+      const response = await VerifyEmail(userData);
       if (response.status === 200) {
         toast.success(response.data.message);
         setTimeout(() => {

@@ -7,31 +7,27 @@ import { Modal, Button, ListGroup } from 'react-bootstrap';
 import { BsArrowRightShort, BsArrowLeftShort, BsPersonCircle } from 'react-icons/bs';
 import { LuClipboardSignature } from "react-icons/lu";
 import {
-  MDBBtn,
   MDBContainer,
   MDBRow,
   MDBCol,
   MDBCard,
   MDBCardBody,
-  MDBInput,
-  MDBIcon,
-  MDBCheckbox
 } from 'mdb-react-ui-kit';
 import { addMarks } from '../../service/allapi';
 
 function Question() {
-  const [triviaData, setTriviaData] = useState([]);
+  const [triviaData, setTriviaData] = useState([]);//for storing data from api
   const [currentPage, setCurrentPage] = useState(0);
   const [questionsPerPage] = useState(1);
   const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [showResults, setShowResults] = useState(false);
+  const [showResults, setShowResults] = useState(false);//for show results
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
   const [showUnansweredModal, setShowUnansweredModal] = useState(false);
   const [isShow, setInvokeModal] = useState(false);
 
   const userid = localStorage.getItem("id");
   const { id } = useParams();
-
+  //for quit modal
   const initModal = () => {
     setInvokeModal(!isShow);
   };
@@ -46,7 +42,7 @@ function Question() {
 
   useEffect(() => {
     console.log(id)
-
+    //checking which category questions are selected by user
     const fetchData = async () => {
       let apiUrl = '';
       if (id === "maths") {
@@ -77,12 +73,12 @@ function Question() {
 
     fetchData();
   }, []);
-
+ //for timer
   useEffect(() => {
     const timer = setTimeout(() => {
       if (timeLeft > 0) {
         setTimeLeft(prevTime => prevTime - 1);
-        if (timeLeft === 60) {
+        if (timeLeft === 165) {
           // Display an alert when 1 minute is left
           toast.warn('Only 1 minute left!', {
             position: "top-center",
@@ -101,9 +97,9 @@ function Question() {
 
     return () => clearTimeout(timer);
   }, [timeLeft]);
-
+  //object for useNavigate
   const navigate = useNavigate();
-
+  //next and previous buttons
   const indexOfLastQuestion = (currentPage + 1) * questionsPerPage;
   const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
   const currentQuestion = triviaData.slice(indexOfFirstQuestion, indexOfLastQuestion)[0];
@@ -117,7 +113,7 @@ function Question() {
       [currentQuestion.question]: option
     });
   };
-
+  //show correct answers in result modal
   const correctAnswersCount = triviaData.reduce((acc, question) => {
     const selectedAnswer = selectedAnswers[question.question];
     if (selectedAnswer === question.correct_answer) {
@@ -125,7 +121,7 @@ function Question() {
     }
     return acc;
   }, 0);
-
+  //object for storing mark details
   const [userData, setUser] = useState({
     subject: id,
     questions: 10,
@@ -144,7 +140,7 @@ function Question() {
   const handlecheck = () => {
     setShowUnansweredModal(true);
   };
-
+  //funtion for submitting answers
   const handleSubmit = async () => {
     setShowResults(true);
     const response = await addMarks(userData);
@@ -160,7 +156,7 @@ function Question() {
     setShowResults(false);
     navigate('/dashboard')
   };
-
+  //for unanswerd questions
   const handleShowUnansweredModal = () => {
     setShowUnansweredModal(true);
   };
@@ -168,12 +164,12 @@ function Question() {
   const handleCloseUnansweredModal = () => {
     setShowUnansweredModal(false);
   };
-
+  //for unanswerd questions getting
   const handleUnansweredQuestions = () => {
     const unansweredQuestions = triviaData.filter(question => !selectedAnswers[question.question]);
     return unansweredQuestions.map(question => question.number);
   };
-
+  //pagenation
   const renderPaginationNumbers = () => {
     const pageNumbers = [];
     for (let i = 0; i < Math.ceil(triviaData.length / questionsPerPage); i++) {
@@ -199,7 +195,7 @@ function Question() {
     }
     return pageNumbers;
   };
-
+  //checking user switches tab or not 
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {

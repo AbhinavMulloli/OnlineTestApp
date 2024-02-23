@@ -4,15 +4,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom';
 import "./Login.css";
 import {
-  MDBBtn,
   MDBContainer,
   MDBRow,
   MDBCol,
   MDBCard,
   MDBCardBody,
-  MDBInput,
-  MDBIcon,
-  MDBCheckbox
+
 } from 'mdb-react-ui-kit';
 import { BsPersonCircle } from 'react-icons/bs';
 import { loginUser } from '../../service/allapi';
@@ -28,7 +25,7 @@ function Login() {
     email: "",
     psw: ""
   });
-
+  //object for useNaviage
   const navigate = useNavigate();
 
   const userDetails = (e) => {
@@ -37,7 +34,7 @@ function Login() {
     const key = e.target.name;
     setUser({ ...userData, [key]: value });
   };
-
+  //funtion for submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, psw } = userData;
@@ -55,6 +52,7 @@ function Login() {
           localStorage.setItem("email", email);
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('id', response.data.id);
+          localStorage.setItem('user', response.data.uname);
           toast.success(response.data.message);
           setTimeout(() => {
             navigate('dashboard');
@@ -67,7 +65,7 @@ function Login() {
           email: "",
           psw: ""
         });
-      } else {
+      } else if(response.status === 401){
         toast.error(response.data.message);
       }
     }

@@ -12,12 +12,12 @@ export const loginUser=async(body)=>{
 }
 
 //Verify email
-export const Verifyemail=async(body)=>{
+export const VerifyEmail=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/verifymail`,body)
 }
 
 //Update password
-export const Updatepassword=async(body)=>{
+export const UpdatePassword=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/updatepass`,body)
 }
 
@@ -29,4 +29,9 @@ export const addMarks=async(body)=>{
 //get all marks
 export const getallMarks=async(uid)=>{
     return await commonRequest("GET",`${BASE_URL}/api/v1/get-marks/${uid}`,"")
+}
+
+//Delete Account
+export const deleteAccount=async(uid)=>{
+    return await commonRequest("DELETE",`${BASE_URL}/api/delete-user/${uid}`,"")
 }
