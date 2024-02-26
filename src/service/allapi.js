@@ -26,9 +26,19 @@ export const addMarks=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/add-marks`,body)
 }
 
+//Add marks in competition
+export const addMarksCompetition=async(body)=>{
+    return await commonRequest("POST",`${BASE_URL}/api/v1/add-marks-comp`,body)
+}
+
 //get all marks
 export const getallMarks=async(uid)=>{
     return await commonRequest("GET",`${BASE_URL}/api/v1/get-marks/${uid}`,"")
+}
+
+//get all marks in competition
+export const getallMarksCompetition=async(body)=>{
+    return await commonRequest("POST",`${BASE_URL}/api/v1/get-marks-comp`,body)
 }
 
 //Delete Account

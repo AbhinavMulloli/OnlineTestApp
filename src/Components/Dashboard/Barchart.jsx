@@ -7,7 +7,7 @@
       const [averageMarksArray, setAverageMarksArray] = useState([]);
 
       useEffect(() => {
-        // Initialize an object to store cumulative sum and count for each subject
+        //Initialize an object to store cumulative sum and count for each subject
         const subjectData = {};
 
         //  Iterate through the data array and update the subjectData object
@@ -20,13 +20,14 @@
           subjectData[subject].count += 1;
         });
 
-        // Calculate average marks for each subject
+        //  Calculate average marks for each subject
         const averageMarks = {};
         for (const subject in subjectData) {
-          averageMarks[subject] = subjectData[subject].sum / subjectData[subject].count;
+          // Calculate average with one decimal point
+          averageMarks[subject] = (subjectData[subject].sum / subjectData[subject].count).toFixed(1);
         }
 
-        // Create arrays for subject names and average marks
+        //  Create arrays for subject names and average marks
         const updatedSubjectsArray = Object.keys(averageMarks);
         const updatedAverageMarksArray = updatedSubjectsArray.map(subject => averageMarks[subject]);
 

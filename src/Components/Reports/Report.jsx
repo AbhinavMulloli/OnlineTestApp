@@ -14,19 +14,19 @@ import { getallMarks } from '../../service/allapi';
 function Report() {
   const uid = localStorage.getItem("id");
   const user = localStorage.getItem("user");
-  const componentPDF = useRef();
-  const today = new Date();
+  const componentPDF = useRef();//for printing pdf
+  const today = new Date();//to get current date
 
-  const [allmarks, SetAllMarks] = useState([]);
+  const [allmarks, SetAllMarks] = useState([]);//state to store all marks 
   const [highestAchievement, setHighestAchievement] = useState(null);
   const [lowestAchievement, setLowestAchievement] = useState(null);
-
+  //funtion to get all marks from database
   const getAllMarks = async () => {
     const response = await getallMarks(uid);
     console.log(response.data);
     SetAllMarks(response.data);
   };
-
+  //funtion for generate pdf
   const generatePDF = useReactToPrint({
     content: () => componentPDF.current,
     documentTitle: "user data",
@@ -53,6 +53,12 @@ function Report() {
     const sum = subjectScores.reduce((acc, curr) => acc + curr, 0);
     const average = sum / subjectScores.length;
 
+    // Calculate Average Time Taken for the Subject
+    const subjectTimeTaken = allmarks
+      .filter(mark => mark.subject === subject && mark.timeTaken)
+      .reduce((acc, mark) => acc + mark.timeTaken, 0);
+    const averageTimeTaken = subjectTimeTaken / subjectScores.length;
+
     // Check if this is the new highest score
     if (!highestAchievement || highest > highestAchievement.highest) {
       setHighestAchievement({
@@ -76,6 +82,7 @@ function Report() {
       highest,
       lowest,
       average,
+      averageTimeTaken
     };
   });
 
@@ -117,6 +124,7 @@ function Report() {
                           <th>Highest Score</th>
                           <th>Lowest Score</th>
                           <th>Average Score</th>
+                          <th>Average Time Taken</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -126,29 +134,30 @@ function Report() {
                             <td>{stats.highest}</td>
                             <td>{stats.lowest}</td>
                             <td>{stats.average.toFixed(2)}</td>
+                            <td>{stats.averageTimeTaken.toFixed(2)} sec</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                   <div className="d-flex justify-content-center  mt-4">
-                  {highestAchievement && (
-                    <div className='col-lg-6 p-4 '>
-                      <h5>Highest Achievement</h5>
-                      <p>Subject: {highestAchievement.subject}</p>
-                      <p>Score: {highestAchievement.highest}</p>
-                      <p>Date: {highestAchievement.date}</p>
-                    </div>
-                  )}
-                  {lowestAchievement && (
-                    <div className='col-lg-6 p-4 '>
-                      <h5>Lowest Achievement</h5>
-                      <p>Subject: {lowestAchievement.subject}</p>
-                      <p>Score: {lowestAchievement.lowest}</p>
-                      <p>Date: {lowestAchievement.date}</p>
-                    </div>
-                  )}
-                    </div>
+                    {highestAchievement && (
+                      <div className='col-lg-6 p-4 '>
+                        <h5>Highest Achievement</h5>
+                        <p>Subject: {highestAchievement.subject}</p>
+                        <p>Score: {highestAchievement.highest}</p>
+                        <p>Date: {highestAchievement.date}</p>
+                      </div>
+                    )}
+                    {lowestAchievement && (
+                      <div className='col-lg-6 p-4 '>
+                        <h5>Lowest Achievement</h5>
+                        <p>Subject: {lowestAchievement.subject}</p>
+                        <p>Score: {lowestAchievement.lowest}</p>
+                        <p>Date: {lowestAchievement.date}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </MDBCardBody>
             </MDBCard>
