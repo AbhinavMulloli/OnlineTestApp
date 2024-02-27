@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Modal, Button, ListGroup } from 'react-bootstrap';
-import { BsArrowRightShort, BsArrowLeftShort, BsPersonCircle } from 'react-icons/bs';
+import { BsArrowRightShort, BsArrowLeftShort } from 'react-icons/bs';
 import { LuClipboardSignature } from "react-icons/lu";
 import {
   MDBContainer,
@@ -13,21 +13,24 @@ import {
   MDBCard,
   MDBCardBody,
 } from 'mdb-react-ui-kit';
-import { addMarks } from '../../service/allapi';
+import { addMarks, addMarksCompetition } from '../../service/allapi';
+
 
 function Question() {
-  const [triviaData, setTriviaData] = useState([]);//for storing data from api
+  const [triviaData, setTriviaData] = useState([]);//to store data from api
   const [currentPage, setCurrentPage] = useState(0);
   const [questionsPerPage] = useState(1);
   const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [showResults, setShowResults] = useState(false);//for show results
-  const [timeLeft, setTimeLeft] = useState(180); // 3 minutes in seconds
+  const [showResults, setShowResults] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(180);
   const [showUnansweredModal, setShowUnansweredModal] = useState(false);
   const [isShow, setInvokeModal] = useState(false);
+  const [startTime, setStartTime] = useState(null); // New state for start time
 
   const userid = localStorage.getItem("id");
+  const user = localStorage.getItem("user");
   const { id } = useParams();
-  //for quit modal
+
   const initModal = () => {
     setInvokeModal(!isShow);
   };
@@ -41,16 +44,30 @@ function Question() {
   };
 
   useEffect(() => {
-    console.log(id)
-    //checking which category questions are selected by user
+    //diffrent api for diffrent subjects
     const fetchData = async () => {
       let apiUrl = '';
-      if (id === "maths") {
-        apiUrl = 'https://opentdb.com/api.php?amount=10&category=18&type=multiple';
-      } else if (id === "computer science") {
-        apiUrl = 'https://opentdb.com/api.php?amount=10&category=19&type=multiple';
-      } else {
-        apiUrl = 'https://opentdb.com/api.php?amount=10&category=23&type=multiple';
+      switch (id) {
+        case "maths":
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=19&type=multiple';
+          break;
+        case "computer science":
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=18&type=multiple';
+          break;
+        case "history":
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=23&type=multiple';
+          break;
+        case "mathsComp":
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=19&type=multiple';
+          break;
+        case "scienceComp":
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=18&type=multiple';
+          break;
+        case "historyComp":
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=23&type=multiple';
+          break;
+        default:
+          apiUrl = 'https://opentdb.com/api.php?amount=10&category=26&type=multiple';
       }
 
       try {
@@ -73,16 +90,15 @@ function Question() {
 
     fetchData();
   }, []);
- //for timer
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (timeLeft > 0) {
         setTimeLeft(prevTime => prevTime - 1);
-        if (timeLeft === 165) {
-          // Display an alert when 1 minute is left
+        if (timeLeft === 60) {
           toast.warn('Only 1 minute left!', {
             position: "top-center",
-            autoClose: 5000,
+            autoClose: 3000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -96,10 +112,10 @@ function Question() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft]);
-  //object for useNavigate
+  }, [timeLeft, currentPage]);
+  //object for useNavigte
   const navigate = useNavigate();
-  //next and previous buttons
+
   const indexOfLastQuestion = (currentPage + 1) * questionsPerPage;
   const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
   const currentQuestion = triviaData.slice(indexOfFirstQuestion, indexOfLastQuestion)[0];
@@ -113,7 +129,7 @@ function Question() {
       [currentQuestion.question]: option
     });
   };
-  //show correct answers in result modal
+  //to find correct answers
   const correctAnswersCount = triviaData.reduce((acc, question) => {
     const selectedAnswer = selectedAnswers[question.question];
     if (selectedAnswer === question.correct_answer) {
@@ -121,17 +137,19 @@ function Question() {
     }
     return acc;
   }, 0);
-  //object for storing mark details
-  const [userData, setUser] = useState({
+  //state to store result details
+  const [markData, setMark] = useState({
     subject: id,
     questions: 10,
     date: new Date(),
     uid: userid,
-    correctAnswersCount: 0
+    username: user,
+    correctAnswersCount: 0,
+    timeTaken: 0 // Initialize timeTaken
   });
 
   useEffect(() => {
-    setUser(prevUserData => ({
+    setMark(prevUserData => ({
       ...prevUserData,
       correctAnswersCount: correctAnswersCount
     }));
@@ -140,22 +158,49 @@ function Question() {
   const handlecheck = () => {
     setShowUnansweredModal(true);
   };
-  //funtion for submitting answers
-  const handleSubmit = async () => {
-    setShowResults(true);
-    const response = await addMarks(userData);
 
-    if (response.status === 200) {
-      console.log(response.data.message);
-    } else {
-      console.log(response.response.data);
+  const handleSubmit = async () => {
+    if (!startTime) {
+      return;
     }
+
+    // Calculate time taken
+    const endTime = new Date();
+    const timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
+
+    // Update markData with timeTaken
+    const updatedMarkData = {
+      ...markData,
+      timeTaken: timeTaken
+    };
+
+    setShowResults(true);
+    //to check it is normal questions or competition
+    if (id === "mathsComp" || id === "scienceComp" || id === "historyComp") {
+      const response = await addMarksCompetition(updatedMarkData);
+      if (response.status === 200) {
+        console.log(response.data.message);
+      } else {
+        console.log(response.response.data);
+      }
+    } else {
+      const response = await addMarks(updatedMarkData);
+      if (response.status === 200) {
+        console.log(response.data.message);
+      } else {
+        console.log(response.response.data);
+      }
+    };
   };
 
   const handleClose = () => {
     setShowResults(false);
     navigate('/dashboard')
   };
+
+  useEffect(() => {
+    setStartTime(new Date());
+  }, []);
   //for unanswerd questions
   const handleShowUnansweredModal = () => {
     setShowUnansweredModal(true);
@@ -301,6 +346,7 @@ function Question() {
                       className="d-flex justify-content-center space-evenly mt-5"
                     >    <p className="text-danger"> <strong>Important Note:</strong> If you switch or minimize tabs during the exam, the exam will be considered over.</p>
                     </div>
+                    {/* result modal */}
                     <Modal show={showResults} onHide={handleClose} centered>
                       <Modal.Header closeButton>
                         <Modal.Title className="text-dark">Results</Modal.Title>
@@ -331,6 +377,7 @@ function Question() {
                   </div>
                 </MDBCardBody>
               </MDBCard>
+              {/* confirm quit modal */}
               <Modal className='deleteModal' show={isShow} onHide={initModal}>
                 <Modal.Header closeButton>
                 </Modal.Header>

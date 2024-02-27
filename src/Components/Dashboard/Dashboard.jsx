@@ -13,10 +13,11 @@ import { deleteAccount, getallMarks } from '../../service/allapi';
 
 function Dashboard() {
   const uid = localStorage.getItem("id");
+  //to understand which subject is selected
   const id = "maths";
   const idb = "computer science";
   const idbc = "history";
-
+  
   const [show, setShow] = useState(false);//for offcanvas
   const [showInstructions, setShowInstructions] = useState(false);//for the instructions modal
   const [allmarks, SetAllMarks] = useState([]);//for storing allmarks datas
@@ -96,7 +97,8 @@ function Dashboard() {
         <Navbar.Collapse id="navbarSupportedContent" className="text-dark">
           <Nav className="me-auto mb-2 mb-lg-0">
             <Nav.Link onClick={initModal} className="text-success">Delete Account</Nav.Link>
-            <Nav.Link onClick={handlelogout} className="text-success">Log out</Nav.Link>
+            <Nav.Link onClick={handlelogout} className="text-success ms-4">Log out</Nav.Link>
+            <Nav.Link href='/competition'  className="text-success ms-4">Online Competition</Nav.Link>
           </Nav>
           {/* modal for delete account confirmation */}
           <Modal className='deleteModal' show={isShow} onHide={initModal}>
@@ -132,7 +134,8 @@ function Dashboard() {
                 <li className="list-group-item">Questions: {a.questions}</li>
                 <li className="list-group-item">Date: {moment(a.date).format("DD/MM/YYYY")}</li>
                 <li className="list-group-item">Duration: 3 min</li>
-                <li className="list-group-item">Score: {a.correctAnswersCount} out of {a.questions}</li>
+                <li className="list-group-item">Score: {a.correctAnswersCount}/{a.questions}</li>
+                <li className="list-group-item">Time taken: {a.timeTaken} sec</li>
               </ul>
             </div>
           ))}
@@ -153,7 +156,7 @@ function Dashboard() {
       <div className="row row-cols-1 row-cols-md-3 p-5">
         <div className="col-md-4 mb-4 p-4">
           <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
-            <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Computer Science Exam Questions</strong></h3>
+            <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Maths Online Exam Questions</strong></h3>
             <div className="card-body d-flex flex-column">
               <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
                 <div className="d-flex flex-column" style={{ marginBottom: '1rem' }}>
@@ -170,7 +173,7 @@ function Dashboard() {
         </div>
         <div className="col-md-4 mb-4 p-4">
           <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
-            <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Maths Online Exam Questions</strong></h3>
+            <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Computer Science Exam Questions</strong></h3>
             <div className="card-body d-flex flex-column">
               <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
                 <div className="d-flex flex-column" style={{ marginBottom: '1rem' }}>
@@ -246,7 +249,7 @@ function Dashboard() {
     </>
   );
 }
-
+//styles for profile pic and previous marks
 const styles = {
   container: {
     display: 'flex',

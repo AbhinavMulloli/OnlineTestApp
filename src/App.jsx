@@ -7,6 +7,7 @@ import Question from './Components/Questions/Question';
 import ForgetPass from './Components/Forgetpassword/ForgetPass';
 import UpdatePass from './Components/Forgetpassword/UpdatePass';
 import Report from './Components/Reports/Report';
+import Competition from './Components/Competitions/Competition';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
     <Route path="/forgetpass" element={ <ForgetPass />}></Route>
     <Route path="/updatepass/:id" element={ <UpdatePass />}></Route>
     <Route path="/report" element={ <Report />}></Route>
+    <Route path="/competition" element={ <Competition />}></Route>
   </Routes>
   )
 }

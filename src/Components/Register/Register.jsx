@@ -51,7 +51,7 @@ function Register() {
       toast.error('password required');
     } else {
       const response = await registerUser(userData);
-      if (response.status === 200) {
+      if (response.status === 201) {
         if (response.data.message === "Registration successful") {
           toast.success(response.data.message);
           setTimeout(() => {
@@ -100,7 +100,7 @@ function Register() {
                       type='text'
                       size="lg"
                     />
-                    <p className='ms-2 spa'>Username Should have 3-16 characters</p>p>
+                    <p className='ms-2 spa'>Username Should have 3-16 characters</p>
                   </div>
                   <div>
                     <input
