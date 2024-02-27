@@ -10,6 +10,7 @@ import { Button,Modal } from 'react-bootstrap';
 import "./Competition.css";
 import { useReactToPrint } from "react-to-print";
 import { FiDownload } from "react-icons/fi";
+import BarGraph from "./BarGraph";
 import { getallMarksCompetition } from '../../service/allapi';
 
 function Competition() {
@@ -76,7 +77,7 @@ function Competition() {
       <MDBContainer fluid>
         <MDBRow className='d-flex justify-content-center align-items-center h-100'>
           <MDBCol col='12'>
-            <MDBCard className='my-5 mx-auto bg-white cardss' style={{ backgroundColor: "rgba(255,255,255,0.55)", borderColor: 'green', maxWidth: "86%", height: "fit-content", borderRadius: '13px', }}>
+            <MDBCard className='my-5 mx-auto bg-white cardss' style={{ backgroundColor: "rgba(255,255,255,0.55)", borderColor: 'green', maxWidth: "88%", height: "fit-content", borderRadius: '13px', }}>
               <MDBCardBody className='p-3 w-100 d-flex flex-column mt-1' style={{ boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
                 <nav className="navbar">
                   <div className="container-fluid">
@@ -97,9 +98,9 @@ function Competition() {
                     </section>
                   </div>
                 </nav>
-                <div className="row row-cols-1 row-cols-md-3 p-3">
-                  <div className="col-md-4 mb-4 p-4">
-                    <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
+                <div className="row row-cols-1 row-cols-md-3 p-3 ">
+                  <div className="col-md-4 mb-4 p-4 ">
+                    <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%',boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
                       <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Computer Science Competition</strong></h3>
                       <div className="card-body d-flex flex-column">
                         <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
@@ -116,7 +117,7 @@ function Competition() {
                     </div>
                   </div>
                   <div className="col-md-4 mb-4 p-4">
-                    <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
+                    <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%',boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
                       <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Maths Quetions Competition</strong></h3>
                       <div className="card-body d-flex flex-column">
                         <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
@@ -133,7 +134,7 @@ function Competition() {
                     </div>
                   </div>
                   <div className="col-md-4 mb-4 p-4">
-                    <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
+                    <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%',boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
                       <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>History Questions Competition</strong></h3>
                       <div className="card-body d-flex flex-column">
                         <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
@@ -168,9 +169,9 @@ function Competition() {
                   </Modal.Footer>
                 </Modal>
                 {/* leaderboard section */}
-                <div  className='bg-white p-4'>
-                  <h2 className='text-center'>Leaderboard</h2>
-                  <div className="d-flex align-items-center mb-3">
+                <div  className='bg-white p-4 '>
+                  <h3 className='text-center'>Leaderboard</h3>
+                  <div className="d-flex align-items-center mb-3 ">
                     <label className="me-2 mb-0 ms-2">Select Subject:</label>
                     <select
                       className="form-select form-select-sm flex-grow-1 ms-3"
@@ -183,7 +184,7 @@ function Competition() {
                       <option value="historyComp">History</option>
                     </select>
                   </div>
-                  <div ref={componentPDF} className='table-responsive mt-3 p-4'>
+                <div ref={componentPDF} className='table-responsive mt-3 p-4 border' style={{boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)'}} >
                     {/* leaderboard table */}
                     <table className="custom-table">
                       <thead>
@@ -212,9 +213,11 @@ function Competition() {
                         ))}
                       </tbody>
                     </table>
-                  </div>
-                </div>
-
+                    </div>
+                  <h3 className='text-center mt-4'>Score Analysis</h3>
+                      {/* Render the BarGraph component */}
+                      <BarGraph allmarks={allmarks} />
+                    </div>
               </MDBCardBody>
             </MDBCard>
           </MDBCol>

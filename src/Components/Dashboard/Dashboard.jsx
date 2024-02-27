@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import Barchart from './Barchart';
 import Piechart from './Piechart';
+import Linechart from './Linechart';
+import Donut from './Donut'
 import { deleteAccount, getallMarks } from '../../service/allapi';
 
 function Dashboard() {
@@ -155,7 +157,7 @@ function Dashboard() {
 
       <div className="row row-cols-1 row-cols-md-3 p-5">
         <div className="col-md-4 mb-4 p-4">
-          <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
+          <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%',boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
             <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Maths Online Exam Questions</strong></h3>
             <div className="card-body d-flex flex-column">
               <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
@@ -172,7 +174,7 @@ function Dashboard() {
           </div>
         </div>
         <div className="col-md-4 mb-4 p-4">
-          <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
+          <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%',boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
             <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>Computer Science Exam Questions</strong></h3>
             <div className="card-body d-flex flex-column">
               <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
@@ -189,7 +191,7 @@ function Dashboard() {
           </div>
         </div>
         <div className="col-md-4 mb-4 p-4">
-          <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%' }}>
+          <div className="p-5 card h-100 text-center border-dark" style={{ minWidth: '33%',boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
             <h3 className="card-header" style={{ fontSize: '1.25rem' }}><strong>History Exam Paper Questions</strong></h3>
             <div className="card-body d-flex flex-column">
               <div className="align-self-end w-100" style={{ marginTop: 'auto' }}>
@@ -226,7 +228,7 @@ function Dashboard() {
       </Modal>
 
       <div className='row'>
-        <h3 className='mx-auto text-white text-center'>Result Analysis</h3>
+        <h3 className='mx-auto text-white text-center'>Result Analysis with average score</h3>
         <div className='d-flex justify-content-center'>
           <a href='/report' > <button  className=' mt-3 btn btn-light ' >View Score Summary</button></a> 
             </div>
@@ -235,6 +237,17 @@ function Dashboard() {
         </div>
         <div className='col-lg-6 p-5'>
           <Piechart allmarks={allmarks}/>
+        </div>
+      </div>
+      <div className='row'>
+        <h3 className='mx-auto text-white text-center'>Result Analysis with average time taken</h3>
+        <div className='d-flex justify-content-center'> 
+            </div>
+        <div className='col-lg-6 p-5'>
+          <Linechart allmarks={allmarks}/>
+        </div>
+        <div className='col-lg-6 p-5'>
+          <Donut allmarks={allmarks}/>
         </div>
       </div>
 

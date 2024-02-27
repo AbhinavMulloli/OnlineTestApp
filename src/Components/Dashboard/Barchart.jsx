@@ -40,7 +40,7 @@
       }, [allmarks]);
 
       return (
-        <div className='bg-white'>
+        <div className='bg-white' style={{boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)'}}>
           <div className="container-fluid mb-5" >
             <Chart
               type="bar"
