@@ -7,6 +7,7 @@ import {
   MDBCardBody
 } from 'mdb-react-ui-kit';
 import moment from 'moment';
+import ".//Report.css";
 import { useReactToPrint } from "react-to-print";
 import { FiDownload } from "react-icons/fi";
 import { getallMarks } from '../../service/allapi';
