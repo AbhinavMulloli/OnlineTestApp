@@ -6,12 +6,13 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { MdOutlineWorkspacePremium } from "react-icons/md";
 import moment from 'moment';
 import Barchart from './Barchart';
 import Piechart from './Piechart';
 import Linechart from './Linechart';
 import Donut from './Donut'
-import { deleteAccount, getallMarks } from '../../service/allapi';
+import { deleteAccount, getallMarks,paymentApi,getUser } from '../../service/allapi';
 
 function Dashboard() {
   const uid = localStorage.getItem("id");
@@ -24,10 +25,21 @@ function Dashboard() {
   const [showInstructions, setShowInstructions] = useState(false);//for the instructions modal
   const [allmarks, SetAllMarks] = useState([]);//for storing allmarks datas
   const [isShow, setInvokeModal] = useState(false);//for delete account modal
+  const [showModal, setShowModal] = useState(false);//for payment modal
+  const [premium, setPremium] = useState('no');//for checking normal or premium user
   const navigate = useNavigate();//object for useNavigate
   //for offcanvas
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  //for payment modal
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  console.log(premium)
   //logout
   const handlelogout = () => {
     localStorage.removeItem("id");
@@ -36,6 +48,10 @@ function Dashboard() {
     localStorage.removeItem("user")
     navigate('/')
 
+  }
+  //for print error message to non premium users when clicking on online cometition
+  const handleredirect = () => {
+      toast.error("Available only for Premium members")
   }
   //for instructions modal
   const handleInstructionsClose = () => setShowInstructions(false);
@@ -50,13 +66,14 @@ function Dashboard() {
       const response = await deleteAccount(uid)
       if (response.status == 200) {
         toast.success(response.data.message);
+        navegate('/')
       } else {
         toast.error(response.data.message)
       }
 
     }
 
-  const userEmail = localStorage.getItem("email");
+  const userName = localStorage.getItem("user");
   const profilePicUrl = 'https://i.postimg.cc/mZN0z8kf/profile.png';
   //funtion for get all marks data from backend
   const getAllMarks = async () => {
@@ -64,9 +81,62 @@ function Dashboard() {
     SetAllMarks(response.data);
   };
 
+  //funtion for get current User
+  const getUserCurrent = async () => {
+    const response = await getUser(uid);
+    setPremium(response.data.isPremium);
+  };
+
   useEffect(() => {
     getAllMarks();
-  }, []);
+    getUserCurrent()
+  }, [premium]);
+  
+  //payment for buying premium
+  const [focus, setFocus] = useState({
+    errName: false,
+    errPass: false
+  });
+
+  const [userData, setUser] = useState({
+      accno: "",
+      psw: "",
+      toaccno: "781236",
+      amount:99,
+      uid:uid
+  });
+  console.log(userData)
+
+  const userDetails = (e) => {
+    e.preventDefault();
+    const { value } = e.target;
+    const key = e.target.name;
+    setUser({ ...userData, [key]: value });
+  };
+  //funtion for submit payment form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { accno, psw } = userData;
+
+    if (accno === "") {
+      toast.error('Account number required');
+    } else if (psw === "") {
+      toast.error('password required');
+    } else {
+      const response = await paymentApi(userData);
+
+      if (response.data.statusCode === 200) {
+        closeModal()
+        getUserCurrent()
+        toast.success(response.data.message);
+        setUser({
+          accno: "",
+          psw: ""
+        });
+      } else 
+        toast.error(response.data.message);
+      }
+  };
 
   return (
     <>
@@ -100,7 +170,12 @@ function Dashboard() {
           <Nav className="me-auto mb-2 mb-lg-0">
             <Nav.Link onClick={initModal} className="text-success">Delete Account</Nav.Link>
             <Nav.Link onClick={handlelogout} className="text-success ms-4">Log out</Nav.Link>
-            <Nav.Link href='/competition'  className="text-success ms-4">Online Competition</Nav.Link>
+            { premium != 'yes' ? 
+            <Nav.Link onClick={handleredirect}  className="text-success ms-4">Online Competition</Nav.Link> : 
+            <Nav.Link href='/competition'  className="text-success ms-4">Online Competition</Nav.Link> }
+            { premium != 'yes' ? 
+            <Nav.Link onClick={openModal} className="text-success ms-4">Buy Premium</Nav.Link>
+            : "" }
           </Nav>
           {/* modal for delete account confirmation */}
           <Modal className='deleteModal' show={isShow} onHide={initModal}>
@@ -121,12 +196,12 @@ function Dashboard() {
        {/* offcanvas for showing profile and previous marks */}
       <Offcanvas show={show} onHide={handleClose} placement='end' style={{ color: 'darkgreen' }}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Profile</Offcanvas.Title>
+          <Offcanvas.Title>Profile  { premium != 'no' ?  <a className='text-center' style={{paddingLeft:"74px",textDecoration:"none",color:"gold"}}>Premium  <MdOutlineWorkspacePremium /> </a>:""}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <div style={styles.container}>
             <img src={profilePicUrl} alt="Profile" style={styles.profilePic} />
-            <div style={styles.email}>{userEmail}</div>
+            <div style={styles.email}>{userName}</div>
           </div>
           <h4 className="mt-3 mb-2 ms-4">Previous Scores</h4>
           {allmarks.map((a, index) => (
@@ -210,21 +285,74 @@ function Dashboard() {
       </div>
 
       {/* Modal for Instructions */}
-      <Modal show={showInstructions} onHide={handleInstructionsClose}>
-        <Modal.Header closeButton>
-          <Modal.Title className="text-success">Instructions</Modal.Title>
+      <Modal show={showInstructions} onHide={handleInstructionsClose} centered>
+        <Modal.Header closeButton className="bg-success text-light border-0">
+          <Modal.Title className="text-white">Instructions</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p className="text-success"><strong  >Duration:</strong> <b className="text-info">3 minutes</b></p>
-          <p className="text-success"><strong>Total Marks:</strong> <b className="text-info">10</b></p>
-          <p className="text-success"><strong>Number of Questions:</strong><b className="text-info"> 10</b></p>
-          <p className="text-danger"> <strong>Important Note:</strong> If you switch or minimize tabs during the exam, the exam will be considered over.</p>
+        <Modal.Body className="bg-light">
+          <div className="text-dark">
+            <p><strong>Duration:</strong> <span className="text-info">3 minutes</span></p>
+            <p><strong>Total Marks:</strong> <span className="text-info">10</span></p>
+            <p><strong>Number of Questions:</strong> <span className="text-info">10</span></p>
+            <p className="text-danger"><strong>Important Note:</strong> If you switch or minimize tabs during the exam, the exam will be considered over.</p>
+          </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button className="bg-white text-success " style={{borderColor:"green"}}  onClick={handleInstructionsClose}>
+        <Modal.Footer className="bg-light border-0">
+          <Button variant="outline-success" onClick={handleInstructionsClose}>
             Close
           </Button>
         </Modal.Footer>
+      </Modal>
+      {/* modal for payment */}
+      <Modal show={showModal} onHide={closeModal} centered>
+        <Modal.Header closeButton className='bg-success'>
+          <Modal.Title className='text-white' >Payment Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="payment-form-container p-4">
+            <Form className="payment-form" onSubmit={handleSubmit}>
+              <Form.Group controlId="accountNumber">
+                <Form.Label>Account Number</Form.Label>
+                <Form.Control
+                  pattern='^(?=.*\d).{6,}$'
+                  onBlur={() => setFocus({ ...focus, errName: true })}
+                  focus={focus.errName.toString()}
+                  type="text"
+                  placeholder="Enter Account Number"
+                  name="accno"
+                  onChange={userDetails}
+                  required
+                />
+              </Form.Group>
+              <p className='ms-2 spa'>Account number must be valid</p>
+              <Form.Group controlId="password">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  pattern='^(?=.*\d).{4,}$'
+                  onBlur={() => setFocus({ ...focus, errPass: true })}
+                  focus={focus.errPass.toString()}
+                  type="password"
+                  name="psw"
+                  placeholder="Enter Password"
+                  onChange={userDetails}
+                  required
+                />
+                <p className='ms-2 spa'>Password must be valid</p>
+              </Form.Group>
+              <Form.Group controlId="amount">
+                <Form.Label>Amount (Rs)</Form.Label>
+                <Form.Control
+                  type="text"
+                  value="99 Rs"
+                  disabled
+                />
+              </Form.Group>
+              <Button variant="success" type="submit" className="w-100 mt-4" onClick={handleSubmit}>
+                Pay Now
+              </Button>
+            </Form>
+          </div>
+        </Modal.Body>
       </Modal>
 
       <div className='row'>

@@ -28,7 +28,8 @@ function Register() {
   const [userData, setUser] = useState({
     uname: "",
     email: "",
-    psw: ""
+    psw: "",
+    isPremium:"no"
   });
   //object for useNavigate
   const navigate = useNavigate();

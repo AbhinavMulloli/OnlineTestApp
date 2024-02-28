@@ -21,9 +21,19 @@ export const UpdatePassword=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/updatepass`,body)
 }
 
+//get current user
+export const getUser=async(uid)=>{
+    return await commonRequest("GET",`${BASE_URL}/api/v1/get-user/${uid}`,"")
+}
+
 //Add marks
 export const addMarks=async(body)=>{
     return await commonRequest("POST",`${BASE_URL}/api/v1/add-marks`,body)
+}
+
+//for payment
+export const paymentApi=async(body)=>{
+    return await commonRequest("POST",`${BASE_URL}/api/v1/add-payment`,body)
 }
 
 //Add marks in competition

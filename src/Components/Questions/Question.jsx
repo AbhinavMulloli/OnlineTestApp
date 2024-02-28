@@ -348,8 +348,8 @@ function Question() {
                     </div>
                     {/* result modal */}
                     <Modal show={showResults} onHide={handleClose} centered>
-                      <Modal.Header closeButton>
-                        <Modal.Title className="text-dark">Results</Modal.Title>
+                      <Modal.Header closeButton className='bg-success'>
+                        <Modal.Title className="text-white">Results</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <h4 className="text-primary">Your score: {correctAnswersCount} out of {triviaData.length}</h4>
@@ -387,9 +387,10 @@ function Question() {
                   <Button variant="success" style={{color:"white",borderColo:"green"}} onClick={confirmQuit}>Confirm</Button>
                 </Modal.Footer>
               </Modal>
+              {/* modal to show unanswered questions */}
               <Modal style={{color:"green"}}  show={showUnansweredModal} onHide={handleCloseUnansweredModal} centered >
-                <Modal.Header  closeButton>
-                  <Modal.Title>Unanswered Questions</Modal.Title>
+                <Modal.Header  closeButton className='bg-success'>
+                  <Modal.Title className='text-white' >Unanswered Questions</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                   <div className="unanswered-questions">
