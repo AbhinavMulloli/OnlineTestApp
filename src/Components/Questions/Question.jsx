@@ -26,6 +26,7 @@ function Question() {
   const [showUnansweredModal, setShowUnansweredModal] = useState(false);
   const [isShow, setInvokeModal] = useState(false);
   const [startTime, setStartTime] = useState(null); // New state for start time
+  const [tabActive, setTabActive] = useState(true);
 
   const userid = localStorage.getItem("id");
   const user = localStorage.getItem("user");
@@ -159,6 +160,7 @@ function Question() {
     setShowUnansweredModal(true);
   };
 
+
   const handleSubmit = async () => {
     if (!startTime) {
       return;
@@ -175,7 +177,7 @@ function Question() {
     };
 
     setShowResults(true);
-    //to check it is normal questions or competition
+    // Check if it is normal questions or competition
     if (id === "mathsComp" || id === "scienceComp" || id === "historyComp") {
       const response = await addMarksCompetition(updatedMarkData);
       if (response.status === 200) {
@@ -190,18 +192,18 @@ function Question() {
       } else {
         console.log(response.response.data);
       }
-    };
+    }
   };
-
   const handleClose = () => {
     setShowResults(false);
-    navigate('/dashboard')
+    navigate('/dashboard');
   };
 
   useEffect(() => {
     setStartTime(new Date());
   }, []);
-  //for unanswerd questions
+
+  // for unanswered questions
   const handleShowUnansweredModal = () => {
     setShowUnansweredModal(true);
   };
@@ -209,12 +211,14 @@ function Question() {
   const handleCloseUnansweredModal = () => {
     setShowUnansweredModal(false);
   };
-  //for unanswerd questions getting
+
+  // for unanswered questions getting
   const handleUnansweredQuestions = () => {
     const unansweredQuestions = triviaData.filter(question => !selectedAnswers[question.question]);
     return unansweredQuestions.map(question => question.number);
   };
-  //pagenation
+
+  // pagination
   const renderPaginationNumbers = () => {
     const pageNumbers = [];
     for (let i = 0; i < Math.ceil(triviaData.length / questionsPerPage); i++) {
@@ -240,21 +244,43 @@ function Question() {
     }
     return pageNumbers;
   };
-  //checking user switches tab or not 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // Submit the quiz when tab is switched
-        handleSubmit();
-      }
-    };
 
+  useEffect(() => {
+    setStartTime(new Date());
+  }, []);
+  //for submit answers when user switch or minimize the tab
+  const handleVisibilityChange = () => {
+    setTabActive(!document.hidden);
+  };
+
+  useEffect(() => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
+
+  useEffect(() => {
+    const handleUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      handleSubmit();
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!tabActive) {
+      handleSubmit();
+    }
+  }, [tabActive]);
+
 
   return (
     <>
