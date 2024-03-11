@@ -85,8 +85,8 @@ function BarGraph({ allmarks }) {
   };
 
   return (
-    <div className=' row d-flex justify-content-center border mt-4' style={{ overflow: "hidden",boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
-      <div className='col-lg-6 col-sm-12 p-5 '>
+    <div className='row d-flex justify-content-center border mt-4' style={{ overflow: "hidden", boxShadow: '0 10px 16px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.22)' }}>
+      <div className='col-lg-6 col-sm-12 p-2'>
         <Chart
           options={barChartOptions}
           series={[{ name: "Scores", data: scores }]}
@@ -94,8 +94,7 @@ function BarGraph({ allmarks }) {
           height={350}
         />
       </div>
-
-      <div className='col-lg-6 col-sm-12 p-5 '>
+      <div className='col-lg-6 col-sm-12 p-2'>
         <Chart
           options={pieChartOptions}
           series={scores}
@@ -104,6 +103,7 @@ function BarGraph({ allmarks }) {
         />
       </div>
     </div>
+
   );
 }
 

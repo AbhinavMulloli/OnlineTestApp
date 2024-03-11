@@ -12,26 +12,25 @@ import Barchart from './Barchart';
 import Piechart from './Piechart';
 import Linechart from './Linechart';
 import Donut from './Donut'
-import { deleteAccount, getallMarks,paymentApi,getUser } from '../../service/allapi';
+import { deleteAccount, getallMarks, paymentApi, getUser } from '../../service/allapi';
 
 function Dashboard() {
   const uid = localStorage.getItem("id");
-  //to understand which subject is selected
   const id = "maths";
   const idb = "computer science";
   const idbc = "history";
-  
-  const [show, setShow] = useState(false);//for offcanvas
-  const [showInstructions, setShowInstructions] = useState(false);//for the instructions modal
-  const [allmarks, SetAllMarks] = useState([]);//for storing allmarks datas
-  const [isShow, setInvokeModal] = useState(false);//for delete account modal
-  const [showModal, setShowModal] = useState(false);//for payment modal
-  const [premium, setPremium] = useState('no');//for checking normal or premium user
-  const navigate = useNavigate();//object for useNavigate
-  //for offcanvas
+
+  const [show, setShow] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [allmarks, SetAllMarks] = useState([]);
+  const [isShow, setInvokeModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [premium, setPremium] = useState('no');
+  const navigate = useNavigate();
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  //for payment modal
+
   const openModal = () => {
     setShowModal(true);
   };
@@ -39,49 +38,44 @@ function Dashboard() {
   const closeModal = () => {
     setShowModal(false);
   };
-  console.log(premium)
-  //logout
+
   const handlelogout = () => {
     localStorage.removeItem("id");
     localStorage.removeItem("token");
-    localStorage.removeItem("email")
-    localStorage.removeItem("user")
-    navigate('/')
+    localStorage.removeItem("email");
+    localStorage.removeItem("user");
+    navigate('/');
+  }
 
-  }
-  //for print error message to non premium users when clicking on online cometition
   const handleredirect = () => {
-      toast.error("Available only for Premium members")
+    toast.error("Available only for Premium members");
   }
-  //for instructions modal
+
   const handleInstructionsClose = () => setShowInstructions(false);
   const handleInstructionsShow = () => setShowInstructions(true);
-  //for delete account modal
+
   const initModal = () => {
     setInvokeModal(!isShow);
   };
-  //funtion for delete Account
+
   const confimrDelete = async () => {
-
-      const response = await deleteAccount(uid)
-      if (response.status == 200) {
-        toast.success(response.data.message);
-        navegate('/')
-      } else {
-        toast.error(response.data.message)
-      }
-
+    const response = await deleteAccount(uid);
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      navigate('/');
+    } else {
+      toast.error(response.data.message);
     }
+  }
 
   const userName = localStorage.getItem("user");
   const profilePicUrl = 'https://i.postimg.cc/mZN0z8kf/profile.png';
-  //funtion for get all marks data from backend
+
   const getAllMarks = async () => {
     const response = await getallMarks(uid);
     SetAllMarks(response.data);
   };
 
-  //funtion for get current User
   const getUserCurrent = async () => {
     const response = await getUser(uid);
     setPremium(response.data.isPremium);
@@ -89,10 +83,9 @@ function Dashboard() {
 
   useEffect(() => {
     getAllMarks();
-    getUserCurrent()
-  }, [premium]);
-  
-  //payment for buying premium
+    getUserCurrent();
+  }, []);
+
   const [focus, setFocus] = useState({
     errName: false,
     errPass: false
@@ -105,7 +98,6 @@ function Dashboard() {
       amount:99,
       uid:uid
   });
-  console.log(userData)
 
   const userDetails = (e) => {
     e.preventDefault();
@@ -113,7 +105,7 @@ function Dashboard() {
     const key = e.target.name;
     setUser({ ...userData, [key]: value });
   };
-  //funtion for submit payment form
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { accno, psw } = userData;
@@ -121,21 +113,22 @@ function Dashboard() {
     if (accno === "") {
       toast.error('Account number required');
     } else if (psw === "") {
-      toast.error('password required');
+      toast.error('Password required');
     } else {
       const response = await paymentApi(userData);
 
       if (response.data.statusCode === 200) {
-        closeModal()
-        getUserCurrent()
+        closeModal();
+        getUserCurrent();
         toast.success(response.data.message);
         setUser({
           accno: "",
           psw: ""
         });
-      } else 
+      } else {
         toast.error(response.data.message);
       }
+    }
   };
 
   return (
@@ -305,89 +298,90 @@ function Dashboard() {
       </Modal>
       {/* modal for payment */}
       <Modal show={showModal} onHide={closeModal} centered>
-        <Modal.Header closeButton className='bg-success'>
-          <Modal.Title className='text-white' >Payment Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="payment-form-container p-4">
-            <Form className="payment-form" onSubmit={handleSubmit}>
-              <Form.Group controlId="accountNumber">
-                <Form.Label>Account Number</Form.Label>
-                <Form.Control
-                  pattern='^(?=.*\d).{6,}$'
-                  onBlur={() => setFocus({ ...focus, errName: true })}
-                  focus={focus.errName.toString()}
-                  type="text"
-                  placeholder="Enter Account Number"
-                  name="accno"
-                  onChange={userDetails}
-                  required
-                />
-              </Form.Group>
-              <p className='ms-2 spa'>Account number must be valid</p>
-              <Form.Group controlId="password">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  pattern='^(?=.*\d).{4,}$'
-                  onBlur={() => setFocus({ ...focus, errPass: true })}
-                  focus={focus.errPass.toString()}
-                  type="password"
-                  name="psw"
-                  placeholder="Enter Password"
-                  onChange={userDetails}
-                  required
-                />
-                <p className='ms-2 spa'>Password must be valid</p>
-              </Form.Group>
-              <Form.Group controlId="amount">
-                <Form.Label>Amount (Rs)</Form.Label>
-                <Form.Control
-                  type="text"
-                  value="99 Rs"
-                  disabled
-                />
-              </Form.Group>
-              <Button variant="success" type="submit" className="w-100 mt-4" onClick={handleSubmit}>
-                Pay Now
-              </Button>
-            </Form>
-          </div>
-        </Modal.Body>
-      </Modal>
+          <Modal.Header closeButton className='bg-success'>
+            <Modal.Title className='text-white' >Payment Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="payment-form-container p-4">
+              <Form className="payment-form" onSubmit={handleSubmit}>
+                <Form.Group controlId="accountNumber">
+                  <Form.Label>Account Number</Form.Label>
+                  <Form.Control
+                    pattern='^(?=.*\d).{6,}$'
+                    onBlur={() => setFocus({ ...focus, errName: true })}
+                    focus={focus.errName.toString()}
+                    type="text"
+                    placeholder="Enter Account Number"
+                    name="accno"
+                    onChange={userDetails}
+                    required
+                  />
+                </Form.Group>
+                <p className='ms-2 spa'>Account number must be valid</p>
+                <Form.Group controlId="password">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    pattern='^(?=.*\d).{4,}$'
+                    onBlur={() => setFocus({ ...focus, errPass: true })}
+                    focus={focus.errPass.toString()}
+                    type="password"
+                    name="psw"
+                    placeholder="Enter Password"
+                    onChange={userDetails}
+                    required
+                  />
+                  <p className='ms-2 spa'>Password must be valid</p>
+                </Form.Group>
+                <Form.Group controlId="amount">
+                  <Form.Label>Amount (Rs)</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value="99 Rs"
+                    disabled
+                  />
+                </Form.Group>
+                <Button variant="success" type="submit" className="w-100 mt-4" onClick={handleSubmit}>
+                  Pay Now
+                </Button>
+              </Form>
+            </div>
+          </Modal.Body>
+        </Modal>
 
-      <div className='row'>
+      <div className='row row-cols-1 row-cols-lg-2'>
         <h3 className='mx-auto text-white text-center'>Result Analysis with average score</h3>
         <div className='d-flex justify-content-center'>
-          <a href='/report' > <button  className=' mt-3 btn btn-light ' >View Score Summary</button></a> 
-            </div>
-        <div className='col-lg-6 p-5'>
-          <Barchart allmarks={allmarks}/>
+          <a href='/report'><button className='mt-3 btn btn-light'>View Score Summary</button></a>
         </div>
-        <div className='col-lg-6 p-5'>
-          <Piechart allmarks={allmarks}/>
+        <div className='col p-2'>
+          <Barchart allmarks={allmarks} />
+        </div>
+        <div className='col p-2'>
+          <Piechart allmarks={allmarks} />
         </div>
       </div>
-      <div className='row'>
+      <div className='row row-cols-1 row-cols-lg-2'>
         <h3 className='mx-auto text-white text-center'>Result Analysis with average time taken</h3>
-        <div className='d-flex justify-content-center'> 
-            </div>
-        <div className='col-lg-6 p-5'>
-          <Linechart allmarks={allmarks}/>
+        <div className='d-flex justify-content-center'>
         </div>
-        <div className='col-lg-6 p-5'>
-          <Donut allmarks={allmarks}/>
+        <div className='col p-2'>
+          <Linechart allmarks={allmarks} />
+        </div>
+        <div className='col p-2'>
+          <Donut allmarks={allmarks} />
         </div>
       </div>
 
-      <footer className="section bg-white mt-5 text-dark" style={{ border: '1px solid white' }}>
-        <div className="text-center mt-5">
-          <p className="footer-alt mb-0 f-14">All Rights Reserved ©2016-2023 mock test</p>
-          <p className="footer-alt mb-0 f-14">Other Countries</p>
-          <p className="footer-alt mb-0 f-14">Indonesia-Pakistan-Russia</p>
-        </div>
-      </footer>
-      <ToastContainer autoClose={1400} position="top-center" />
-    </>
+
+        <footer className="section bg-white mt-5 text-dark" style={{ border: '1px solid white' }}>
+          <div className="text-center mt-5">
+            <p className="footer-alt mb-0 f-14">All Rights Reserved ©2016-2023 mock test</p>
+            <p className="footer-alt mb-0 f-14">Other Countries</p>
+            <p className="footer-alt mb-0 f-14">Indonesia-Pakistan-Russia</p>
+          </div>
+        </footer>
+        <ToastContainer autoClose={1400} position="top-center" />
+      </>
   );
 }
 //styles for profile pic and previous marks
