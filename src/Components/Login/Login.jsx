@@ -133,6 +133,9 @@ function Login() {
 
                 <div className="text-center mt-1">
                   <p style={{ color: 'black' }}>Not a member? <a href="/register" style={{ textDecoration: 'none', color: 'orange' }}>Register</a></p>
+                  <p style={{fontSize:"12px"}}>Demo email: abhinavmulloli1@gmail.com  
+   password: 12345678</p>
+        
                 </div>
               </MDBCardBody>
             </MDBCard>
